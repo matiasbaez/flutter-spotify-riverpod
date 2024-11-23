@@ -1,4 +1,5 @@
 import 'package:client/core/utils.dart';
+import 'package:client/features/home/view/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +31,12 @@ class _SigninPageState extends ConsumerState<SigninPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = ref.watch(authViewModelProvider)?.isLoading == true;
+    // Watch only the isLoading for this page
+    final isLoading = ref.watch(
+      authViewModelProvider.select(
+        (value) => value?.isLoading == true,
+      ),
+    );
 
     ref.listen(authViewModelProvider, (prev, next) {
       next?.when(
@@ -39,11 +45,12 @@ class _SigninPageState extends ConsumerState<SigninPage> {
             context,
             'Signed in successfully!',
           );
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute<SigninPage>(
-              builder: (context) => const SigninPage(),
+            MaterialPageRoute<HomePage>(
+              builder: (context) => const HomePage(),
             ),
+            (_) => false,
           );
         },
         error: (error, st) {
