@@ -4,11 +4,13 @@ class UserModel {
   String? id;
   String email;
   String name;
+  String? token;
 
   UserModel({
     required this.email,
     required this.name,
     this.id,
+    this.token,
   });
 
   factory UserModel.fromMap(Map<String, dynamic> json) {
@@ -16,6 +18,7 @@ class UserModel {
       id: (json['id'] ?? '') as String,
       email: (json['email'] ?? '') as String,
       name: (json['name'] ?? '') as String,
+      token: (json['token'] ?? '') as String,
     );
   }
 
@@ -27,6 +30,7 @@ class UserModel {
       'id': id,
       'email': email,
       'name': name,
+      'token': token,
     };
   }
 
@@ -42,6 +46,7 @@ class UserModel {
       id: id ?? this.id,
       email: email ?? this.email,
       name: name ?? this.name,
+      token: token ?? this.token,
     );
   }
 
