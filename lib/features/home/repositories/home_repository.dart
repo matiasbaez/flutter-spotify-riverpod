@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:client/features/home/models/song_model.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,6 +59,50 @@ class HomeRepository {
       }
 
       return Left(AppFailure(body));
+    } catch (e) {
+      return Left(AppFailure(e.toString()));
+    }
+  }
+
+  Future<Either<AppFailure, List<SongModel>>> getAllSongs({
+    required String token,
+  }) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ServerConstant.baseUrl}/song/list'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return Right(songsFromJson(response.body));
+      }
+
+      final decodedBody = jsonDecode(response.body) as Map<String, dynamic>;
+      return Left(AppFailure(decodedBody['detail'] as String));
+    } catch (e) {
+      return Left(AppFailure(e.toString()));
+    }
+  }
+
+  Future<Either<AppFailure, List<SongModel>>> getLibrarySongs({
+    required String token,
+  }) async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ServerConstant.baseUrl}/song/library'),
+        headers: {
+          'x-auth-token': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return Right([]);
+      }
+
+      return Left(AppFailure(response.body));
     } catch (e) {
       return Left(AppFailure(e.toString()));
     }

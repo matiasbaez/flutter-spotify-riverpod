@@ -1,12 +1,26 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:client/core/providers/current_user_notifier.dart';
-import 'package:client/core/utils.dart';
-import 'package:client/features/home/repositories/home_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'package:client/core/providers/current_user_notifier.dart';
+import 'package:client/core/utils.dart';
+import 'package:client/features/home/models/song_model.dart';
+import 'package:client/features/home/repositories/home_repository.dart';
+
 part 'home_viewmodel.g.dart';
+
+@riverpod
+Future<List<SongModel>> getAllSongs(GetAllSongsRef ref) async {
+  final token = ref.read(currentUserNotifierProvider)!.token;
+  final response = await ref.read(homeRepositoryProvider).getAllSongs(
+        token: token!,
+      );
+  return response.fold(
+    (l) => throw l.message,
+    (r) => r,
+  );
+}
 
 @riverpod
 class HomeViewModel extends _$HomeViewModel {
